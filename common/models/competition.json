@@ -1,0 +1,38 @@
+{
+  "name": "competition",
+  "base": "PersistedModel",
+  "strict": false,
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "comp_name": {
+      "type": "string",
+      "required": true
+    },
+    "comp_fee": {
+      "type": "number",
+      "required": true
+    },
+    "comp_regulation": {
+      "type": "string",
+      "required": true
+    },
+    "comp_type": {
+      "type": "string",
+      "id": false,
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {
+    "teams": {
+      "type": "hasMany",
+      "model": "team",
+      "foreignKey": "competition"
+    }
+  },
+  "acls": [],
+  "methods": {}
+}

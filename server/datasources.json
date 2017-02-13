@@ -1,0 +1,17 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "cloudantNoSQLDB": {
+    "host": "01d9ce83-10c0-40e7-a5c1-de6428ed1b85-bluemix.cloudant.com",
+    "port": 443,
+    "url": "https://01d9ce83-10c0-40e7-a5c1-de6428ed1b85-bluemix:bef419e468e44fca7bc448a9492c3b8ead679486e90bb3c2b27219d7453384b8@01d9ce83-10c0-40e7-a5c1-de6428ed1b85-bluemix.cloudant.com",
+    "database": "sportman",
+    "username": "01d9ce83-10c0-40e7-a5c1-de6428ed1b85-bluemix",
+    "password": "bef419e468e44fca7bc448a9492c3b8ead679486e90bb3c2b27219d7453384b8",
+    "name": "cloudantNoSQLDB",
+    "connector": "cloudant",
+    "user": "01d9ce83-10c0-40e7-a5c1-de6428ed1b85-bluemix"
+  }
+}
