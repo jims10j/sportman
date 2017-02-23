@@ -14,25 +14,32 @@
     ]
   },
   "User": {
-    "dataSource": "db"
+    "dataSource": "cloudantNoSQLDB",
+    "public": false
   },
   "AccessToken": {
-    "dataSource": "db",
+    "dataSource": "cloudantNoSQLDB",
     "public": false
   },
   "ACL": {
-    "dataSource": "db",
+    "dataSource": "cloudantNoSQLDB",
     "public": false
   },
   "RoleMapping": {
-    "dataSource": "db",
+    "dataSource": "cloudantNoSQLDB",
     "public": false
   },
   "Role": {
-    "dataSource": "db",
+    "dataSource": "cloudantNoSQLDB",
     "public": false
   },
   "competition": {
+    "dataSource": "cloudantNoSQLDB",
+    "public": true,
+    "$promise": {},
+    "$resolved": true
+  },
+  "Employee": {
     "dataSource": "cloudantNoSQLDB",
     "public": true,
     "$promise": {},
