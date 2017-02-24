@@ -1,5 +1,5 @@
 {
-  "name": "user",
+  "name": "Pengguna",
   "base": "User",
   "strict": false,
   "idInjection": false,
