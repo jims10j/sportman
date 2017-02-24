@@ -12,50 +12,26 @@
       "id": true,
       "idInjection": true
     },
-    "name": {
+    "fullname": {
+      "type": "string",
+      "required": true
+    },
+    "username": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
       "type": "string",
       "required": true
     },
     "role": {
       "type": "string"
     },
-    "division": {
-      "type": "string"
-    },
     "admin": {
       "type": "boolean"
     },
-    "bio": {
-      "type": "string"
-    },
-    "link": {
-      "type": "string"
-    },
     "photo": {
       "type": "string"
-    },
-    "poin": {
-      "type": "number"
-    },
-    "location": {
-      "type": "string"
-    },
-    "postLiked": {
-      "type": "string"
-    },
-    "postSeen": {
-      "type": "string"
-    },
-    "postShared": {
-      "type": "string"
-    },
-    "badges": {
-      "type": [
-        "object"
-      ]
-    },
-    "badgeCount": {
-      "type": "number"
     },
     "oneSignalId": {
       "type": "string"
@@ -69,7 +45,7 @@
     "device_model": {
       "type": "string"
     },
-    "employeeTicket": {
+    "userTicket": {
       "type": "string"
     }
   },
@@ -92,7 +68,7 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "getEmployee"
+      "property": "getUser"
     },
     {
       "accessType": "EXECUTE",

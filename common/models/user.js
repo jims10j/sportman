@@ -1,6 +1,6 @@
-module.exports = function(Employee) {
-	Employee.getEmployee = function(username, cb){
-		Employee.findOne({fields: {id: false}, where:{username:username}},
+module.exports = function(User) {
+	User.getUser = function(username, cb){
+		User.findOne({fields: {id: false}, where:{username:username}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -10,8 +10,8 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.getLeaderboard = function(cb){
-		Employee.find({fields: {id: true, username: true, name: true, poin: true, badges: true, badgeCount: true, photo: true}, order: 'poin DESC'},
+	User.getLeaderboard = function(cb){
+		User.find({fields: {id: true, username: true, name: true, poin: true, badges: true, badgeCount: true, photo: true}, order: 'poin DESC'},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -21,8 +21,8 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.getContacts = function(cb){
-		Employee.find({fields: {id:true, username: true, name: true, division:true, photo:true}, order: 'name asc'},
+	User.getContacts = function(cb){
+		User.find({fields: {id:true, username: true, name: true, division:true, photo:true}, order: 'name asc'},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -32,11 +32,11 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.addComment = function(postId, employeeId, employeeName, employeePhoto, content, cb){
-		var EmployeeComment = Employee.app.models.Comment;
+	User.addComment = function(postId, UserId, UserName, UserPhoto, content, cb){
+		var UserComment = User.app.models.Comment;
 		date = new Date();
 		dateJSON = date.toJSON();
-		EmployeeComment.create({postId: postId, employeeId: employeeId, employeeName: employeeName, employeePhoto: employeePhoto, content: content, date: dateJSON},
+		UserComment.create({postId: postId, UserId: UserId, UserName: UserName, UserPhoto: UserPhoto, content: content, date: dateJSON},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -44,18 +44,18 @@ module.exports = function(Employee) {
 					commentInstance = instance;
 					console.log(commentInstance);
 					// cb(null,instance);
-					Employee.findOne({where: {id: employeeId}},
+					User.findOne({where: {id: UserId}},
 					function(err,instance){
 						if(instance===null){
 							cb(null,null);
 						}else{
-							// cb(null,commentInstance,employeeInstance);
+							// cb(null,commentInstance,UserInstance);
 							dataPoin = instance['poin']; //get every poin he got
 							dataPoin = dataPoin+5;
 							dataBadges = instance['badges']; //get every badges he achieved
 							badgeCount = instance['badgeCount'];
 							counterComment = 0;
-							EmployeeComment.count({employeeId: employeeId},
+							UserComment.count({UserId: UserId},
 								function(err, count){
 									counterComment = count;
 									console.log(counterComment);
@@ -64,16 +64,16 @@ module.exports = function(Employee) {
 										if(dataBadges.toString()==="[{}]"){
 											newBadge = '{"badgeName": "The Aspiring Handwriting [BRONZE]", "achieved_date": "'+dateJSON+'"}';
 											badgeCount = badgeCount+1;
-											Employee.updateAll({id: employeeId}, {poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update poin +5, newBadge
+											User.updateAll({id: UserId}, {poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update poin +5, newBadge
 											function(err,info){
-												Employee.findOne({where:{id: employeeId}},
+												User.findOne({where:{id: UserId}},
 													function(err,instance){
 														if(instance===null){
 															cb(null,null);
 														}else{
-															employeeInstance = instance;
-															console.log(employeeInstance);
-															cb(null,commentInstance,employeeInstance);
+															UserInstance = instance;
+															console.log(UserInstance);
+															cb(null,commentInstance,UserInstance);
 														}
 													})
 											});
@@ -82,16 +82,16 @@ module.exports = function(Employee) {
 											badgeCount = badgeCount+1;
 											dataBadges.push(JSON.parse(newBadge));
 											badgesNow = dataBadges.toString();
-											Employee.updateAll({id: employeeId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+											User.updateAll({id: UserId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 											function(err,info){
-												Employee.findOne({where:{id: employeeId}},
+												User.findOne({where:{id: UserId}},
 													function(err,instance){
 														if(instance===null){
 															cb(null,null);
 														}else{
-															employeeInstance = instance;
-															console.log(employeeInstance);
-															cb(null,commentInstance,employeeInstance);
+															UserInstance = instance;
+															console.log(UserInstance);
+															cb(null,commentInstance,UserInstance);
 														}
 													})
 											});
@@ -104,16 +104,16 @@ module.exports = function(Employee) {
 										badgeCount = badgeCount+1;	
 										dataBadges.push(JSON.parse(newBadge));
 										badgesNow = dataBadges.toString();
-										Employee.updateAll({id: employeeId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+										User.updateAll({id: UserId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 										function(err,info){
-											Employee.findOne({where:{id: employeeId}},
+											User.findOne({where:{id: UserId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														employeeInstance = instance;
-														console.log(employeeInstance);
-														cb(null,commentInstance,employeeInstance);
+														UserInstance = instance;
+														console.log(UserInstance);
+														cb(null,commentInstance,UserInstance);
 													}
 												})
 										});
@@ -124,32 +124,32 @@ module.exports = function(Employee) {
 										badgeCount = badgeCount+1;
 										dataBadges.push(JSON.parse(newBadge));
 										badgesNow = dataBadges.toString();
-										Employee.updateAll({id: employeeId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+										User.updateAll({id: UserId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 										function(err,info){
-											Employee.findOne({where:{id: employeeId}},
+											User.findOne({where:{id: UserId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														employeeInstance = instance;
-														console.log(employeeInstance);
-														cb(null,commentInstance,employeeInstance);
+														UserInstance = instance;
+														console.log(UserInstance);
+														cb(null,commentInstance,UserInstance);
 													}
 												})
 										});
 									}
 
 									else{ //posts he liked is not 10, 30, or 50
-										Employee.updateAll({id: employeeId}, {poin: dataPoin}, //update and poin +5
+										User.updateAll({id: UserId}, {poin: dataPoin}, //update and poin +5
 										function(err,info){
-											Employee.findOne({where:{id: employeeId}},
+											User.findOne({where:{id: UserId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														employeeInstance = instance;
-														console.log(employeeInstance);
-														cb(null,commentInstance,employeeInstance);
+														UserInstance = instance;
+														console.log(UserInstance);
+														cb(null,commentInstance,UserInstance);
 													}
 												})
 										});
@@ -162,8 +162,8 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.addLike = function(employeeId, postId, cb){
-		Employee.findOne({where:{id: employeeId}},
+	User.addLike = function(UserId, postId, cb){
+		User.findOne({where:{id: UserId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -181,9 +181,9 @@ module.exports = function(Employee) {
 					//if this is the first post he like
 					else if(postLikedNow === ''){
 						postLikedNow = postId;
-						Employee.updateAll({id: employeeId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
+						User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
 						function(err,info){
-							Employee.findOne({where:{id: employeeId}},
+							User.findOne({where:{id: UserId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -207,9 +207,9 @@ module.exports = function(Employee) {
 							if(dataBadges.toString()==="[{}]"){
 								newBadge = '{"badgeName": "The Twin Thumbs Up [BRONZE]", "achieved_date": "'+dateJSON+'"}';
 								badgeCount = badgeCount+1;
-								Employee.updateAll({id: employeeId}, {postLiked: postLikedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+								User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}},
+									User.findOne({where:{id: UserId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -223,9 +223,9 @@ module.exports = function(Employee) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge));
 								badgesNow = dataBadges.toString();
-								Employee.updateAll({id: employeeId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+								User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}},
+									User.findOne({where:{id: UserId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -245,9 +245,9 @@ module.exports = function(Employee) {
 							badgeCount = badgeCount+1;	
 							dataBadges.push(JSON.parse(newBadge));
 							badgesNow = dataBadges.toString();
-							Employee.updateAll({id: employeeId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+							User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 							function(err,info){
-								Employee.findOne({where:{id: employeeId}},
+								User.findOne({where:{id: UserId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -265,9 +265,9 @@ module.exports = function(Employee) {
 							badgeCount = badgeCount+1;
 							dataBadges.push(JSON.parse(newBadge));
 							badgesNow = dataBadges.toString();
-							Employee.updateAll({id: employeeId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+							User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 							function(err,info){
-								Employee.findOne({where:{id: employeeId}},
+								User.findOne({where:{id: UserId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -279,9 +279,9 @@ module.exports = function(Employee) {
 						}
 
 						else{ //posts he liked is not 10, 30, or 50
-							Employee.updateAll({id: employeeId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
+							User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
 							function(err,info){
-								Employee.findOne({where:{id: employeeId}},
+								User.findOne({where:{id: UserId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -296,8 +296,8 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.addUnlike = function(employeeId, postId, cb){
-		Employee.findOne({where:{id: employeeId}},
+	User.addUnlike = function(UserId, postId, cb){
+		User.findOne({where:{id: UserId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -318,9 +318,9 @@ module.exports = function(Employee) {
 					else {						
 						postLikedNow = postLikedNow.replace(postId,'');
 					}
-					Employee.updateAll({id: employeeId}, {postLiked: postLikedNow, poin: dataPoin}, //update
+					User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin}, //update
 					function(err,info){
-						Employee.findOne({where:{id: employeeId}},
+						User.findOne({where:{id: UserId}},
 							function(err,instance){
 								if(instance===null){
 									cb(null,null);
@@ -333,8 +333,8 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.likeCounter = function(employeeId, cb){
-		Employee.findOne({fields: {postLiked: true}, where: {id: employeeId}},
+	User.likeCounter = function(UserId, cb){
+		User.findOne({fields: {postLiked: true}, where: {id: UserId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -347,8 +347,8 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.addSeen = function(employeeId, postId, cb){
-		Employee.findOne({where:{id: employeeId}},
+	User.addSeen = function(UserId, postId, cb){
+		User.findOne({where:{id: UserId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -366,9 +366,9 @@ module.exports = function(Employee) {
 					//if this is the first post he see
 					else if(postSeenNow === ''){
 						postSeenNow = postId;
-						Employee.updateAll({id: employeeId}, {postSeen: postSeenNow, poin: dataPoin}, //update
+						User.updateAll({id: UserId}, {postSeen: postSeenNow, poin: dataPoin}, //update
 						function(err,info){
-							Employee.findOne({where:{id: employeeId}},
+							User.findOne({where:{id: UserId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -390,9 +390,9 @@ module.exports = function(Employee) {
 							if (dataBadges.toString()==="[{}]"){
 								newBadge = '{"badgeName" : "The Most Seeing Eye [BRONZE]", "achieved_date" : "'+dateJSON+'"}';
 								badgeCount = badgeCount+1;
-								Employee.updateAll({id:employeeId}, {postSeen: postSeenNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								User.updateAll({id:UserId}, {postSeen: postSeenNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}},
+									User.findOne({where:{id: UserId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -406,9 +406,9 @@ module.exports = function(Employee) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge));
 								badgesNow = dataBadges.toString();
-								Employee.updateAll({id:employeeId}, {postSeen: postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, newBadge
+								User.updateAll({id:UserId}, {postSeen: postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, newBadge
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}}, 
+									User.findOne({where:{id: UserId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -426,9 +426,9 @@ module.exports = function(Employee) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								Employee.updateAll({id:employeeId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								User.updateAll({id:UserId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}}, 
+									User.findOne({where:{id: UserId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -444,9 +444,9 @@ module.exports = function(Employee) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								Employee.updateAll({id:employeeId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								User.updateAll({id:UserId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}}, 
+									User.findOne({where:{id: UserId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -456,9 +456,9 @@ module.exports = function(Employee) {
 										})
 								});
 						} else {
-							Employee.updateAll({id:employeeId}, {postSeen:postSeenNow, poin: dataPoin}, // update postSeenNow, poin+1
+							User.updateAll({id:UserId}, {postSeen:postSeenNow, poin: dataPoin}, // update postSeenNow, poin+1
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}}, 
+									User.findOne({where:{id: UserId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -474,8 +474,8 @@ module.exports = function(Employee) {
 		});
 	};
 
-	Employee.seenCounter = function(employeeId, cb){
-		Employee.findOne({fields: {postSeen: true}, where: {id: employeeId}},
+	User.seenCounter = function(UserId, cb){
+		User.findOne({fields: {postSeen: true}, where: {id: UserId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -488,8 +488,8 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.addShared = function(employeeId, postId, cb){
-		Employee.findOne({where:{id: employeeId}},
+	User.addShared = function(UserId, postId, cb){
+		User.findOne({where:{id: UserId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -507,9 +507,9 @@ module.exports = function(Employee) {
 					//if this is the first post he share
 					else if(postSharedNow === ''){
 						postSharedNow = postId;
-						Employee.updateAll({id: employeeId}, {postShared: postSharedNow, poin:dataPoin}, //update
+						User.updateAll({id: UserId}, {postShared: postSharedNow, poin:dataPoin}, //update
 						function(err,info){
-							Employee.findOne({where:{id: employeeId}},
+							User.findOne({where:{id: UserId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -530,9 +530,9 @@ module.exports = function(Employee) {
 								if (dataBadges.toString()==="[{}]"){
 									newBadge = '{"badgeName" : "The Human Handbook [BRONZE]", "achieved_date" : "'+dateJSON+'"}';
 									badgeCount = badgeCount+1;
-									Employee.updateAll({id:employeeId}, {postShared: postSharedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSharedNow, poin+1, new Badge
+									User.updateAll({id:UserId}, {postShared: postSharedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSharedNow, poin+1, new Badge
 									function(err,info){
-										Employee.findOne({where:{id: employeeId}},
+										User.findOne({where:{id: UserId}},
 											function(err,instance){
 												if(instance===null){
 													cb(null,null);
@@ -546,9 +546,9 @@ module.exports = function(Employee) {
 									badgeCount = badgeCount+1;
 									dataBadges.push(JSON.parse(newBadge));
 									badgesNow = dataBadges.toString();
-									Employee.updateAll({id:employeeId}, {postShared: postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSharedNow, poin+1, newBadge
+									User.updateAll({id:UserId}, {postShared: postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSharedNow, poin+1, newBadge
 									function(err,info){
-										Employee.findOne({where:{id: employeeId}}, 
+										User.findOne({where:{id: UserId}}, 
 											function(err,instance){
 												if(instance===null){
 													cb(null,null);
@@ -566,9 +566,9 @@ module.exports = function(Employee) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								Employee.updateAll({id:employeeId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new adge
+								User.updateAll({id:UserId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new adge
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}}, 
+									User.findOne({where:{id: UserId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -584,9 +584,9 @@ module.exports = function(Employee) {
 							badgeCount = badgeCount+1;
 							dataBadges.push(JSON.parse(newBadge)); // add new badge
 							badgesNow = dataBadges.toString();
-							Employee.updateAll({id:employeeId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+							User.updateAll({id:UserId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 							function(err,info){
-								Employee.findOne({where:{id: employeeId}}, 
+								User.findOne({where:{id: UserId}}, 
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -596,9 +596,9 @@ module.exports = function(Employee) {
 									})
 							});
 						} else {
-							Employee.updateAll({id:employeeId}, {postShared:postSharedNow, poin: dataPoin}, // update postSeenNow, poin+1
+							User.updateAll({id:UserId}, {postShared:postSharedNow, poin: dataPoin}, // update postSeenNow, poin+1
 								function(err,info){
-									Employee.findOne({where:{id: employeeId}}, 
+									User.findOne({where:{id: UserId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -613,8 +613,8 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.sharedCounter = function(employeeId, cb){
-		Employee.findOne({fields: {postShared: true}, where: {id: employeeId}},
+	User.sharedCounter = function(UserId, cb){
+		User.findOne({fields: {postShared: true}, where: {id: UserId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -627,10 +627,10 @@ module.exports = function(Employee) {
 			});
 	};
 
-	Employee.saveOneSignalId = function(employeeId, oneSignalId, cb){
-		Employee.updateAll({id:employeeId}, {oneSignalId: oneSignalId},
+	User.saveOneSignalId = function(UserId, oneSignalId, cb){
+		User.updateAll({id:UserId}, {oneSignalId: oneSignalId},
 			function(err,info){
-				Employee.findOne({where:{id: employeeId}}, 
+				User.findOne({where:{id: UserId}}, 
 					function(err,instance){
 						if(instance===null){
 							cb(null,null);
@@ -641,7 +641,7 @@ module.exports = function(Employee) {
 			});
 	}
 
-	Employee.updatePassword = function (ctx, email, oldPassword, newPassword, cb) {
+	User.updatePassword = function (ctx, email, oldPassword, newPassword, cb) {
 	  var newErrMsg, newErr;
 	  try {
 	    this.findOne({where: {id: ctx.req.accessToken.userId, email: email}}, function (err, user) {
@@ -683,7 +683,7 @@ module.exports = function(Employee) {
 
 	};
 
-	// Employee.getDevices = function (employeeId,cb){
+	// User.getDevices = function (UserId,cb){
 	// 	var http = require('https');
 	// 	var headers = {
 	// 	  "Content-Type": "application/json",
@@ -718,7 +718,7 @@ module.exports = function(Employee) {
 	// 	            // var allMessages = []; // array of string, this variabel combines senderMessage & receiverMessage
 
 	// 	            oneSignalId = [];
-	// 	            Employee.findOne({where:{id: employeeId}}, 
+	// 	            User.findOne({where:{id: UserId}}, 
 	// 	            			function(err,instance){
 	// 	            				if(instance===null){
 	// 	            					// cb(null,null);
@@ -742,9 +742,9 @@ module.exports = function(Employee) {
 	// 	            // device_model : parsed.device_model;
 	// 	            // console.log(allMessages);
 
-	// 	            Employee.updateAll({id:employeeId}, {session_count : session_count, last_active : last_active},
+	// 	            User.updateAll({id:UserId}, {session_count : session_count, last_active : last_active},
 	// 	            	function(err,info){
-	// 	            		Employee.findOne({where:{id: employeeId}}, 
+	// 	            		User.findOne({where:{id: UserId}}, 
 	// 	            			function(err,instance){
 	// 	            				if(instance===null){
 	// 	            					cb(null,null);
@@ -771,18 +771,18 @@ module.exports = function(Employee) {
 	// }
 
 
-	Employee.remoteMethod(
-		'getEmployee',
+	User.remoteMethod(
+		'getUser',
 		{
 			accepts: {arg: 'username', type: 'string'},
 			returns: {arg: 'id', type: 'string', root: true},
-			http: {path: '/getEmployee', verb: 'get', source: 'query'},
-			description: "Get employee instance by username"
+			http: {path: '/getUser', verb: 'get', source: 'query'},
+			description: "Get User instance by username"
 		}
 	);
 
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'getContacts',
 		{
 			// accepts: {arg: 'id', type: 'string'},
@@ -792,38 +792,38 @@ module.exports = function(Employee) {
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'getLeaderboard',
 		{
 			returns: {arg: 'id', type: 'string', root: true},
 			http: {path: '/getLeaderboard', verb: 'get', source: 'query'},
-			description: "Get leaderboard of all employees"
+			description: "Get leaderboard of all Users"
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'addComment',
 		{
 			accepts: [
 					{arg: 'postId', type: 'string'},
-					{arg: 'employeeId', type: 'string'},
-					{arg: 'employeeName', type: 'string'},
-					{arg: 'employeePhoto', type: 'string'},
+					{arg: 'UserId', type: 'string'},
+					{arg: 'UserName', type: 'string'},
+					{arg: 'UserPhoto', type: 'string'},
 					{arg: 'content', type: 'string'}
 					],
 			returns: [
 					{arg: 'comment', type: 'string'},
-					{arg: 'employee', type: 'string'}
+					{arg: 'User', type: 'string'}
 					],
 			http: {path: '/addComment', verb: 'put', source: 'query'}
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'addLike',
 		{
 			accepts: [
-					{arg: 'employeeId', type: 'string'},
+					{arg: 'UserId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postLiked', type: 'string', root: true},
@@ -831,11 +831,11 @@ module.exports = function(Employee) {
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'addUnlike',
 		{
 			accepts: [
-					{arg: 'employeeId', type: 'string'},
+					{arg: 'UserId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postLiked', type: 'string', root: true},
@@ -843,41 +843,41 @@ module.exports = function(Employee) {
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'likeCounter',
 		{
-			accepts: {arg: 'employeeId', type: 'string'},
+			accepts: {arg: 'UserId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/likeCounter', verb: 'get', source: 'query'},
-			description: "Get how many post Employee{id} has liked"
+			description: "Get how many post User{id} has liked"
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'seenCounter',
 		{
-			accepts: {arg: 'employeeId', type: 'string'},
+			accepts: {arg: 'UserId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/seenCounter', verb: 'get', source: 'query'},
-			description: "Get how many post Employee{id} has seen"
+			description: "Get how many post User{id} has seen"
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'sharedCounter',
 		{
-			accepts: {arg: 'employeeId', type: 'string'},
+			accepts: {arg: 'UserId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/sharedCounter', verb: 'get', source: 'query'},
-			description: "Get how many post Employee{id} has shared"
+			description: "Get how many post User{id} has shared"
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'addSeen',
 		{
 			accepts: [
-					{arg: 'employeeId', type: 'string'},
+					{arg: 'UserId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postSeen', type: 'string', root: true},
@@ -885,11 +885,11 @@ module.exports = function(Employee) {
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'addShared',
 		{
 			accepts: [
-					{arg: 'employeeId', type: 'string'},
+					{arg: 'UserId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postSeen', type: 'string', root: true},
@@ -897,11 +897,11 @@ module.exports = function(Employee) {
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'saveOneSignalId',
 		{
 			accepts: [
-					{arg: 'employeeId', type: 'string'},
+					{arg: 'UserId', type: 'string'},
 					{arg: 'oneSignalId', type: 'string'}
 					],
 			returns: {type: 'string', root: true},
@@ -909,7 +909,7 @@ module.exports = function(Employee) {
 		}
 	);
 
-	Employee.remoteMethod(
+	User.remoteMethod(
 		'updatePassword',
 		  {
 		    description: "Allows a logged user to change his password.",
@@ -924,10 +924,10 @@ module.exports = function(Employee) {
 		  }
 	);
 
-	// Employee.remoteMethod(
+	// User.remoteMethod(
 	// 	'getDevices',
 	// 	{
-	// 		arg: 'employeeId', type: 'string',
+	// 		arg: 'UserId', type: 'string',
 	// 		returns : {arg: 'result', type: 'object', root: true},
 	// 		http : {path: '/getDevices', verb: 'get'}
 	// 	}
