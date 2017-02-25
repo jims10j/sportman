@@ -1,6 +1,6 @@
-module.exports = function(user) {
-	user.getuser = function(username, cb){
-		user.findOne({fields: {id: false}, where:{username:username}},
+module.exports = function(pemakai) {
+	pemakai.getpemakai = function(username, cb){
+		pemakai.findOne({fields: {id: false}, where:{username:username}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -10,8 +10,8 @@ module.exports = function(user) {
 			});
 	};
 
-	user.getLeaderboard = function(cb){
-		user.find({fields: {id: true, username: true, name: true, poin: true, badges: true, badgeCount: true, photo: true}, order: 'poin DESC'},
+	pemakai.getLeaderboard = function(cb){
+		pemakai.find({fields: {id: true, username: true, name: true, poin: true, badges: true, badgeCount: true, photo: true}, order: 'poin DESC'},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -21,8 +21,8 @@ module.exports = function(user) {
 			});
 	};
 
-	user.getContacts = function(cb){
-		user.find({fields: {id:true, username: true, name: true, division:true, photo:true}, order: 'name asc'},
+	pemakai.getContacts = function(cb){
+		pemakai.find({fields: {id:true, username: true, name: true, division:true, photo:true}, order: 'name asc'},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -32,11 +32,11 @@ module.exports = function(user) {
 			});
 	};
 
-	user.addComment = function(postId, userId, userName, userPhoto, content, cb){
-		var userComment = user.app.models.Comment;
+	pemakai.addComment = function(postId, pemakaiId, pemakaiName, pemakaiPhoto, content, cb){
+		var pemakaiComment = pemakai.app.models.Comment;
 		date = new Date();
 		dateJSON = date.toJSON();
-		userComment.create({postId: postId, userId: userId, userName: userName, userPhoto: userPhoto, content: content, date: dateJSON},
+		pemakaiComment.create({postId: postId, pemakaiId: pemakaiId, pemakaiName: pemakaiName, pemakaiPhoto: pemakaiPhoto, content: content, date: dateJSON},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -44,18 +44,18 @@ module.exports = function(user) {
 					commentInstance = instance;
 					console.log(commentInstance);
 					// cb(null,instance);
-					user.findOne({where: {id: userId}},
+					pemakai.findOne({where: {id: pemakaiId}},
 					function(err,instance){
 						if(instance===null){
 							cb(null,null);
 						}else{
-							// cb(null,commentInstance,userInstance);
+							// cb(null,commentInstance,pemakaiInstance);
 							dataPoin = instance['poin']; //get every poin he got
 							dataPoin = dataPoin+5;
 							dataBadges = instance['badges']; //get every badges he achieved
 							badgeCount = instance['badgeCount'];
 							counterComment = 0;
-							userComment.count({userId: userId},
+							pemakaiComment.count({pemakaiId: pemakaiId},
 								function(err, count){
 									counterComment = count;
 									console.log(counterComment);
@@ -64,16 +64,16 @@ module.exports = function(user) {
 										if(dataBadges.toString()==="[{}]"){
 											newBadge = '{"badgeName": "The Aspiring Handwriting [BRONZE]", "achieved_date": "'+dateJSON+'"}';
 											badgeCount = badgeCount+1;
-											user.updateAll({id: userId}, {poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update poin +5, newBadge
+											pemakai.updateAll({id: pemakaiId}, {poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update poin +5, newBadge
 											function(err,info){
-												user.findOne({where:{id: userId}},
+												pemakai.findOne({where:{id: pemakaiId}},
 													function(err,instance){
 														if(instance===null){
 															cb(null,null);
 														}else{
-															userInstance = instance;
-															console.log(userInstance);
-															cb(null,commentInstance,userInstance);
+															pemakaiInstance = instance;
+															console.log(pemakaiInstance);
+															cb(null,commentInstance,pemakaiInstance);
 														}
 													})
 											});
@@ -82,16 +82,16 @@ module.exports = function(user) {
 											badgeCount = badgeCount+1;
 											dataBadges.push(JSON.parse(newBadge));
 											badgesNow = dataBadges.toString();
-											user.updateAll({id: userId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+											pemakai.updateAll({id: pemakaiId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 											function(err,info){
-												user.findOne({where:{id: userId}},
+												pemakai.findOne({where:{id: pemakaiId}},
 													function(err,instance){
 														if(instance===null){
 															cb(null,null);
 														}else{
-															userInstance = instance;
-															console.log(userInstance);
-															cb(null,commentInstance,userInstance);
+															pemakaiInstance = instance;
+															console.log(pemakaiInstance);
+															cb(null,commentInstance,pemakaiInstance);
 														}
 													})
 											});
@@ -104,16 +104,16 @@ module.exports = function(user) {
 										badgeCount = badgeCount+1;	
 										dataBadges.push(JSON.parse(newBadge));
 										badgesNow = dataBadges.toString();
-										user.updateAll({id: userId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+										pemakai.updateAll({id: pemakaiId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 										function(err,info){
-											user.findOne({where:{id: userId}},
+											pemakai.findOne({where:{id: pemakaiId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														userInstance = instance;
-														console.log(userInstance);
-														cb(null,commentInstance,userInstance);
+														pemakaiInstance = instance;
+														console.log(pemakaiInstance);
+														cb(null,commentInstance,pemakaiInstance);
 													}
 												})
 										});
@@ -124,32 +124,32 @@ module.exports = function(user) {
 										badgeCount = badgeCount+1;
 										dataBadges.push(JSON.parse(newBadge));
 										badgesNow = dataBadges.toString();
-										user.updateAll({id: userId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+										pemakai.updateAll({id: pemakaiId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 										function(err,info){
-											user.findOne({where:{id: userId}},
+											pemakai.findOne({where:{id: pemakaiId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														userInstance = instance;
-														console.log(userInstance);
-														cb(null,commentInstance,userInstance);
+														pemakaiInstance = instance;
+														console.log(pemakaiInstance);
+														cb(null,commentInstance,pemakaiInstance);
 													}
 												})
 										});
 									}
 
 									else{ //posts he liked is not 10, 30, or 50
-										user.updateAll({id: userId}, {poin: dataPoin}, //update and poin +5
+										pemakai.updateAll({id: pemakaiId}, {poin: dataPoin}, //update and poin +5
 										function(err,info){
-											user.findOne({where:{id: userId}},
+											pemakai.findOne({where:{id: pemakaiId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														userInstance = instance;
-														console.log(userInstance);
-														cb(null,commentInstance,userInstance);
+														pemakaiInstance = instance;
+														console.log(pemakaiInstance);
+														cb(null,commentInstance,pemakaiInstance);
 													}
 												})
 										});
@@ -162,8 +162,8 @@ module.exports = function(user) {
 			});
 	};
 
-	user.addLike = function(userId, postId, cb){
-		user.findOne({where:{id: userId}},
+	pemakai.addLike = function(pemakaiId, postId, cb){
+		pemakai.findOne({where:{id: pemakaiId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -181,9 +181,9 @@ module.exports = function(user) {
 					//if this is the first post he like
 					else if(postLikedNow === ''){
 						postLikedNow = postId;
-						user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
+						pemakai.updateAll({id: pemakaiId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
 						function(err,info){
-							user.findOne({where:{id: userId}},
+							pemakai.findOne({where:{id: pemakaiId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -207,9 +207,9 @@ module.exports = function(user) {
 							if(dataBadges.toString()==="[{}]"){
 								newBadge = '{"badgeName": "The Twin Thumbs Up [BRONZE]", "achieved_date": "'+dateJSON+'"}';
 								badgeCount = badgeCount+1;
-								user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+								pemakai.updateAll({id: pemakaiId}, {postLiked: postLikedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 								function(err,info){
-									user.findOne({where:{id: userId}},
+									pemakai.findOne({where:{id: pemakaiId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -223,9 +223,9 @@ module.exports = function(user) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge));
 								badgesNow = dataBadges.toString();
-								user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+								pemakai.updateAll({id: pemakaiId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 								function(err,info){
-									user.findOne({where:{id: userId}},
+									pemakai.findOne({where:{id: pemakaiId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -245,9 +245,9 @@ module.exports = function(user) {
 							badgeCount = badgeCount+1;	
 							dataBadges.push(JSON.parse(newBadge));
 							badgesNow = dataBadges.toString();
-							user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+							pemakai.updateAll({id: pemakaiId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 							function(err,info){
-								user.findOne({where:{id: userId}},
+								pemakai.findOne({where:{id: pemakaiId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -265,9 +265,9 @@ module.exports = function(user) {
 							badgeCount = badgeCount+1;
 							dataBadges.push(JSON.parse(newBadge));
 							badgesNow = dataBadges.toString();
-							user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+							pemakai.updateAll({id: pemakaiId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 							function(err,info){
-								user.findOne({where:{id: userId}},
+								pemakai.findOne({where:{id: pemakaiId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -279,9 +279,9 @@ module.exports = function(user) {
 						}
 
 						else{ //posts he liked is not 10, 30, or 50
-							user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
+							pemakai.updateAll({id: pemakaiId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
 							function(err,info){
-								user.findOne({where:{id: userId}},
+								pemakai.findOne({where:{id: pemakaiId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -296,8 +296,8 @@ module.exports = function(user) {
 			});
 	};
 
-	user.addUnlike = function(userId, postId, cb){
-		user.findOne({where:{id: userId}},
+	pemakai.addUnlike = function(pemakaiId, postId, cb){
+		pemakai.findOne({where:{id: pemakaiId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -318,9 +318,9 @@ module.exports = function(user) {
 					else {						
 						postLikedNow = postLikedNow.replace(postId,'');
 					}
-					user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin}, //update
+					pemakai.updateAll({id: pemakaiId}, {postLiked: postLikedNow, poin: dataPoin}, //update
 					function(err,info){
-						user.findOne({where:{id: userId}},
+						pemakai.findOne({where:{id: pemakaiId}},
 							function(err,instance){
 								if(instance===null){
 									cb(null,null);
@@ -333,8 +333,8 @@ module.exports = function(user) {
 			});
 	};
 
-	user.likeCounter = function(userId, cb){
-		user.findOne({fields: {postLiked: true}, where: {id: userId}},
+	pemakai.likeCounter = function(pemakaiId, cb){
+		pemakai.findOne({fields: {postLiked: true}, where: {id: pemakaiId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -347,8 +347,8 @@ module.exports = function(user) {
 			});
 	};
 
-	user.addSeen = function(userId, postId, cb){
-		user.findOne({where:{id: userId}},
+	pemakai.addSeen = function(pemakaiId, postId, cb){
+		pemakai.findOne({where:{id: pemakaiId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -366,9 +366,9 @@ module.exports = function(user) {
 					//if this is the first post he see
 					else if(postSeenNow === ''){
 						postSeenNow = postId;
-						user.updateAll({id: userId}, {postSeen: postSeenNow, poin: dataPoin}, //update
+						pemakai.updateAll({id: pemakaiId}, {postSeen: postSeenNow, poin: dataPoin}, //update
 						function(err,info){
-							user.findOne({where:{id: userId}},
+							pemakai.findOne({where:{id: pemakaiId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -390,9 +390,9 @@ module.exports = function(user) {
 							if (dataBadges.toString()==="[{}]"){
 								newBadge = '{"badgeName" : "The Most Seeing Eye [BRONZE]", "achieved_date" : "'+dateJSON+'"}';
 								badgeCount = badgeCount+1;
-								user.updateAll({id:userId}, {postSeen: postSeenNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								pemakai.updateAll({id:pemakaiId}, {postSeen: postSeenNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									user.findOne({where:{id: userId}},
+									pemakai.findOne({where:{id: pemakaiId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -406,9 +406,9 @@ module.exports = function(user) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge));
 								badgesNow = dataBadges.toString();
-								user.updateAll({id:userId}, {postSeen: postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, newBadge
+								pemakai.updateAll({id:pemakaiId}, {postSeen: postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, newBadge
 								function(err,info){
-									user.findOne({where:{id: userId}}, 
+									pemakai.findOne({where:{id: pemakaiId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -426,9 +426,9 @@ module.exports = function(user) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								user.updateAll({id:userId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								pemakai.updateAll({id:pemakaiId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									user.findOne({where:{id: userId}}, 
+									pemakai.findOne({where:{id: pemakaiId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -444,9 +444,9 @@ module.exports = function(user) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								user.updateAll({id:userId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								pemakai.updateAll({id:pemakaiId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									user.findOne({where:{id: userId}}, 
+									pemakai.findOne({where:{id: pemakaiId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -456,9 +456,9 @@ module.exports = function(user) {
 										})
 								});
 						} else {
-							user.updateAll({id:userId}, {postSeen:postSeenNow, poin: dataPoin}, // update postSeenNow, poin+1
+							pemakai.updateAll({id:pemakaiId}, {postSeen:postSeenNow, poin: dataPoin}, // update postSeenNow, poin+1
 								function(err,info){
-									user.findOne({where:{id: userId}}, 
+									pemakai.findOne({where:{id: pemakaiId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -474,8 +474,8 @@ module.exports = function(user) {
 		});
 	};
 
-	user.seenCounter = function(userId, cb){
-		user.findOne({fields: {postSeen: true}, where: {id: userId}},
+	pemakai.seenCounter = function(pemakaiId, cb){
+		pemakai.findOne({fields: {postSeen: true}, where: {id: pemakaiId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -488,8 +488,8 @@ module.exports = function(user) {
 			});
 	};
 
-	user.addShared = function(userId, postId, cb){
-		user.findOne({where:{id: userId}},
+	pemakai.addShared = function(pemakaiId, postId, cb){
+		pemakai.findOne({where:{id: pemakaiId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -507,9 +507,9 @@ module.exports = function(user) {
 					//if this is the first post he share
 					else if(postSharedNow === ''){
 						postSharedNow = postId;
-						user.updateAll({id: userId}, {postShared: postSharedNow, poin:dataPoin}, //update
+						pemakai.updateAll({id: pemakaiId}, {postShared: postSharedNow, poin:dataPoin}, //update
 						function(err,info){
-							user.findOne({where:{id: userId}},
+							pemakai.findOne({where:{id: pemakaiId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -530,9 +530,9 @@ module.exports = function(user) {
 								if (dataBadges.toString()==="[{}]"){
 									newBadge = '{"badgeName" : "The Human Handbook [BRONZE]", "achieved_date" : "'+dateJSON+'"}';
 									badgeCount = badgeCount+1;
-									user.updateAll({id:userId}, {postShared: postSharedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSharedNow, poin+1, new Badge
+									pemakai.updateAll({id:pemakaiId}, {postShared: postSharedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSharedNow, poin+1, new Badge
 									function(err,info){
-										user.findOne({where:{id: userId}},
+										pemakai.findOne({where:{id: pemakaiId}},
 											function(err,instance){
 												if(instance===null){
 													cb(null,null);
@@ -546,9 +546,9 @@ module.exports = function(user) {
 									badgeCount = badgeCount+1;
 									dataBadges.push(JSON.parse(newBadge));
 									badgesNow = dataBadges.toString();
-									user.updateAll({id:userId}, {postShared: postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSharedNow, poin+1, newBadge
+									pemakai.updateAll({id:pemakaiId}, {postShared: postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSharedNow, poin+1, newBadge
 									function(err,info){
-										user.findOne({where:{id: userId}}, 
+										pemakai.findOne({where:{id: pemakaiId}}, 
 											function(err,instance){
 												if(instance===null){
 													cb(null,null);
@@ -566,9 +566,9 @@ module.exports = function(user) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								user.updateAll({id:userId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new adge
+								pemakai.updateAll({id:pemakaiId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new adge
 								function(err,info){
-									user.findOne({where:{id: userId}}, 
+									pemakai.findOne({where:{id: pemakaiId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -584,9 +584,9 @@ module.exports = function(user) {
 							badgeCount = badgeCount+1;
 							dataBadges.push(JSON.parse(newBadge)); // add new badge
 							badgesNow = dataBadges.toString();
-							user.updateAll({id:userId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+							pemakai.updateAll({id:pemakaiId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 							function(err,info){
-								user.findOne({where:{id: userId}}, 
+								pemakai.findOne({where:{id: pemakaiId}}, 
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -596,9 +596,9 @@ module.exports = function(user) {
 									})
 							});
 						} else {
-							user.updateAll({id:userId}, {postShared:postSharedNow, poin: dataPoin}, // update postSeenNow, poin+1
+							pemakai.updateAll({id:pemakaiId}, {postShared:postSharedNow, poin: dataPoin}, // update postSeenNow, poin+1
 								function(err,info){
-									user.findOne({where:{id: userId}}, 
+									pemakai.findOne({where:{id: pemakaiId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -613,8 +613,8 @@ module.exports = function(user) {
 			});
 	};
 
-	user.sharedCounter = function(userId, cb){
-		user.findOne({fields: {postShared: true}, where: {id: userId}},
+	pemakai.sharedCounter = function(pemakaiId, cb){
+		pemakai.findOne({fields: {postShared: true}, where: {id: pemakaiId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -627,10 +627,10 @@ module.exports = function(user) {
 			});
 	};
 
-	user.saveOneSignalId = function(userId, oneSignalId, cb){
-		user.updateAll({id:userId}, {oneSignalId: oneSignalId},
+	pemakai.saveOneSignalId = function(pemakaiId, oneSignalId, cb){
+		pemakai.updateAll({id:pemakaiId}, {oneSignalId: oneSignalId},
 			function(err,info){
-				user.findOne({where:{id: userId}}, 
+				pemakai.findOne({where:{id: pemakaiId}}, 
 					function(err,instance){
 						if(instance===null){
 							cb(null,null);
@@ -641,7 +641,7 @@ module.exports = function(user) {
 			});
 	}
 
-	user.updatePassword = function (ctx, email, oldPassword, newPassword, cb) {
+	pemakai.updatePassword = function (ctx, email, oldPassword, newPassword, cb) {
 	  var newErrMsg, newErr;
 	  try {
 	    this.findOne({where: {id: ctx.req.accessToken.userId, email: email}}, function (err, user) {
@@ -683,7 +683,7 @@ module.exports = function(user) {
 
 	};
 
-	// user.getDevices = function (userId,cb){
+	// pemakai.getDevices = function (pemakaiId,cb){
 	// 	var http = require('https');
 	// 	var headers = {
 	// 	  "Content-Type": "application/json",
@@ -718,7 +718,7 @@ module.exports = function(user) {
 	// 	            // var allMessages = []; // array of string, this variabel combines senderMessage & receiverMessage
 
 	// 	            oneSignalId = [];
-	// 	            user.findOne({where:{id: userId}}, 
+	// 	            pemakai.findOne({where:{id: pemakaiId}}, 
 	// 	            			function(err,instance){
 	// 	            				if(instance===null){
 	// 	            					// cb(null,null);
@@ -742,9 +742,9 @@ module.exports = function(user) {
 	// 	            // device_model : parsed.device_model;
 	// 	            // console.log(allMessages);
 
-	// 	            user.updateAll({id:userId}, {session_count : session_count, last_active : last_active},
+	// 	            pemakai.updateAll({id:pemakaiId}, {session_count : session_count, last_active : last_active},
 	// 	            	function(err,info){
-	// 	            		user.findOne({where:{id: userId}}, 
+	// 	            		pemakai.findOne({where:{id: pemakaiId}}, 
 	// 	            			function(err,instance){
 	// 	            				if(instance===null){
 	// 	            					cb(null,null);
@@ -771,18 +771,18 @@ module.exports = function(user) {
 	// }
 
 
-	user.remoteMethod(
-		'getuser',
+	pemakai.remoteMethod(
+		'getpemakai',
 		{
 			accepts: {arg: 'username', type: 'string'},
 			returns: {arg: 'id', type: 'string', root: true},
-			http: {path: '/getuser', verb: 'get', source: 'query'},
-			description: "Get user instance by username"
+			http: {path: '/getpemakai', verb: 'get', source: 'query'},
+			description: "Get pemakai instance by username"
 		}
 	);
 
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'getContacts',
 		{
 			// accepts: {arg: 'id', type: 'string'},
@@ -792,38 +792,38 @@ module.exports = function(user) {
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'getLeaderboard',
 		{
 			returns: {arg: 'id', type: 'string', root: true},
 			http: {path: '/getLeaderboard', verb: 'get', source: 'query'},
-			description: "Get leaderboard of all users"
+			description: "Get leaderboard of all pemakais"
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'addComment',
 		{
 			accepts: [
 					{arg: 'postId', type: 'string'},
-					{arg: 'userId', type: 'string'},
-					{arg: 'userName', type: 'string'},
-					{arg: 'userPhoto', type: 'string'},
+					{arg: 'pemakaiId', type: 'string'},
+					{arg: 'pemakaiName', type: 'string'},
+					{arg: 'pemakaiPhoto', type: 'string'},
 					{arg: 'content', type: 'string'}
 					],
 			returns: [
 					{arg: 'comment', type: 'string'},
-					{arg: 'user', type: 'string'}
+					{arg: 'pemakai', type: 'string'}
 					],
 			http: {path: '/addComment', verb: 'put', source: 'query'}
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'addLike',
 		{
 			accepts: [
-					{arg: 'userId', type: 'string'},
+					{arg: 'pemakaiId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postLiked', type: 'string', root: true},
@@ -831,11 +831,11 @@ module.exports = function(user) {
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'addUnlike',
 		{
 			accepts: [
-					{arg: 'userId', type: 'string'},
+					{arg: 'pemakaiId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postLiked', type: 'string', root: true},
@@ -843,41 +843,41 @@ module.exports = function(user) {
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'likeCounter',
 		{
-			accepts: {arg: 'userId', type: 'string'},
+			accepts: {arg: 'pemakaiId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/likeCounter', verb: 'get', source: 'query'},
-			description: "Get how many post user{id} has liked"
+			description: "Get how many post pemakai{id} has liked"
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'seenCounter',
 		{
-			accepts: {arg: 'userId', type: 'string'},
+			accepts: {arg: 'pemakaiId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/seenCounter', verb: 'get', source: 'query'},
-			description: "Get how many post user{id} has seen"
+			description: "Get how many post pemakai{id} has seen"
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'sharedCounter',
 		{
-			accepts: {arg: 'userId', type: 'string'},
+			accepts: {arg: 'pemakaiId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/sharedCounter', verb: 'get', source: 'query'},
-			description: "Get how many post user{id} has shared"
+			description: "Get how many post pemakai{id} has shared"
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'addSeen',
 		{
 			accepts: [
-					{arg: 'userId', type: 'string'},
+					{arg: 'pemakaiId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postSeen', type: 'string', root: true},
@@ -885,11 +885,11 @@ module.exports = function(user) {
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'addShared',
 		{
 			accepts: [
-					{arg: 'userId', type: 'string'},
+					{arg: 'pemakaiId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postSeen', type: 'string', root: true},
@@ -897,11 +897,11 @@ module.exports = function(user) {
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'saveOneSignalId',
 		{
 			accepts: [
-					{arg: 'userId', type: 'string'},
+					{arg: 'pemakaiId', type: 'string'},
 					{arg: 'oneSignalId', type: 'string'}
 					],
 			returns: {type: 'string', root: true},
@@ -909,7 +909,7 @@ module.exports = function(user) {
 		}
 	);
 
-	user.remoteMethod(
+	pemakai.remoteMethod(
 		'updatePassword',
 		  {
 		    description: "Allows a logged user to change his password.",
@@ -924,10 +924,10 @@ module.exports = function(user) {
 		  }
 	);
 
-	// user.remoteMethod(
+	// pemakai.remoteMethod(
 	// 	'getDevices',
 	// 	{
-	// 		arg: 'userId', type: 'string',
+	// 		arg: 'pemakaiId', type: 'string',
 	// 		returns : {arg: 'result', type: 'object', root: true},
 	// 		http : {path: '/getDevices', verb: 'get'}
 	// 	}

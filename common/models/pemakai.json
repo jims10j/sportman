@@ -1,5 +1,5 @@
 {
-  "name": "user",
+  "name": "pemakai",
   "base": "User",
   "strict": false,
   "idInjection": false,
@@ -68,7 +68,7 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "getUser"
+      "property": "getpemakai"
     },
     {
       "accessType": "EXECUTE",
