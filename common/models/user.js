@@ -1,6 +1,6 @@
-module.exports = function(User) {
-	User.getUser = function(username, cb){
-		User.findOne({fields: {id: false}, where:{username:username}},
+module.exports = function(user) {
+	user.getuser = function(username, cb){
+		user.findOne({fields: {id: false}, where:{username:username}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -10,8 +10,8 @@ module.exports = function(User) {
 			});
 	};
 
-	User.getLeaderboard = function(cb){
-		User.find({fields: {id: true, username: true, name: true, poin: true, badges: true, badgeCount: true, photo: true}, order: 'poin DESC'},
+	user.getLeaderboard = function(cb){
+		user.find({fields: {id: true, username: true, name: true, poin: true, badges: true, badgeCount: true, photo: true}, order: 'poin DESC'},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -21,8 +21,8 @@ module.exports = function(User) {
 			});
 	};
 
-	User.getContacts = function(cb){
-		User.find({fields: {id:true, username: true, name: true, division:true, photo:true}, order: 'name asc'},
+	user.getContacts = function(cb){
+		user.find({fields: {id:true, username: true, name: true, division:true, photo:true}, order: 'name asc'},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -32,11 +32,11 @@ module.exports = function(User) {
 			});
 	};
 
-	User.addComment = function(postId, UserId, UserName, UserPhoto, content, cb){
-		var UserComment = User.app.models.Comment;
+	user.addComment = function(postId, userId, userName, userPhoto, content, cb){
+		var userComment = user.app.models.Comment;
 		date = new Date();
 		dateJSON = date.toJSON();
-		UserComment.create({postId: postId, UserId: UserId, UserName: UserName, UserPhoto: UserPhoto, content: content, date: dateJSON},
+		userComment.create({postId: postId, userId: userId, userName: userName, userPhoto: userPhoto, content: content, date: dateJSON},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -44,18 +44,18 @@ module.exports = function(User) {
 					commentInstance = instance;
 					console.log(commentInstance);
 					// cb(null,instance);
-					User.findOne({where: {id: UserId}},
+					user.findOne({where: {id: userId}},
 					function(err,instance){
 						if(instance===null){
 							cb(null,null);
 						}else{
-							// cb(null,commentInstance,UserInstance);
+							// cb(null,commentInstance,userInstance);
 							dataPoin = instance['poin']; //get every poin he got
 							dataPoin = dataPoin+5;
 							dataBadges = instance['badges']; //get every badges he achieved
 							badgeCount = instance['badgeCount'];
 							counterComment = 0;
-							UserComment.count({UserId: UserId},
+							userComment.count({userId: userId},
 								function(err, count){
 									counterComment = count;
 									console.log(counterComment);
@@ -64,16 +64,16 @@ module.exports = function(User) {
 										if(dataBadges.toString()==="[{}]"){
 											newBadge = '{"badgeName": "The Aspiring Handwriting [BRONZE]", "achieved_date": "'+dateJSON+'"}';
 											badgeCount = badgeCount+1;
-											User.updateAll({id: UserId}, {poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update poin +5, newBadge
+											user.updateAll({id: userId}, {poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update poin +5, newBadge
 											function(err,info){
-												User.findOne({where:{id: UserId}},
+												user.findOne({where:{id: userId}},
 													function(err,instance){
 														if(instance===null){
 															cb(null,null);
 														}else{
-															UserInstance = instance;
-															console.log(UserInstance);
-															cb(null,commentInstance,UserInstance);
+															userInstance = instance;
+															console.log(userInstance);
+															cb(null,commentInstance,userInstance);
 														}
 													})
 											});
@@ -82,16 +82,16 @@ module.exports = function(User) {
 											badgeCount = badgeCount+1;
 											dataBadges.push(JSON.parse(newBadge));
 											badgesNow = dataBadges.toString();
-											User.updateAll({id: UserId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+											user.updateAll({id: userId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 											function(err,info){
-												User.findOne({where:{id: UserId}},
+												user.findOne({where:{id: userId}},
 													function(err,instance){
 														if(instance===null){
 															cb(null,null);
 														}else{
-															UserInstance = instance;
-															console.log(UserInstance);
-															cb(null,commentInstance,UserInstance);
+															userInstance = instance;
+															console.log(userInstance);
+															cb(null,commentInstance,userInstance);
 														}
 													})
 											});
@@ -104,16 +104,16 @@ module.exports = function(User) {
 										badgeCount = badgeCount+1;	
 										dataBadges.push(JSON.parse(newBadge));
 										badgesNow = dataBadges.toString();
-										User.updateAll({id: UserId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+										user.updateAll({id: userId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 										function(err,info){
-											User.findOne({where:{id: UserId}},
+											user.findOne({where:{id: userId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														UserInstance = instance;
-														console.log(UserInstance);
-														cb(null,commentInstance,UserInstance);
+														userInstance = instance;
+														console.log(userInstance);
+														cb(null,commentInstance,userInstance);
 													}
 												})
 										});
@@ -124,32 +124,32 @@ module.exports = function(User) {
 										badgeCount = badgeCount+1;
 										dataBadges.push(JSON.parse(newBadge));
 										badgesNow = dataBadges.toString();
-										User.updateAll({id: UserId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
+										user.updateAll({id: userId}, {poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update poin +5, newBadge
 										function(err,info){
-											User.findOne({where:{id: UserId}},
+											user.findOne({where:{id: userId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														UserInstance = instance;
-														console.log(UserInstance);
-														cb(null,commentInstance,UserInstance);
+														userInstance = instance;
+														console.log(userInstance);
+														cb(null,commentInstance,userInstance);
 													}
 												})
 										});
 									}
 
 									else{ //posts he liked is not 10, 30, or 50
-										User.updateAll({id: UserId}, {poin: dataPoin}, //update and poin +5
+										user.updateAll({id: userId}, {poin: dataPoin}, //update and poin +5
 										function(err,info){
-											User.findOne({where:{id: UserId}},
+											user.findOne({where:{id: userId}},
 												function(err,instance){
 													if(instance===null){
 														cb(null,null);
 													}else{
-														UserInstance = instance;
-														console.log(UserInstance);
-														cb(null,commentInstance,UserInstance);
+														userInstance = instance;
+														console.log(userInstance);
+														cb(null,commentInstance,userInstance);
 													}
 												})
 										});
@@ -162,8 +162,8 @@ module.exports = function(User) {
 			});
 	};
 
-	User.addLike = function(UserId, postId, cb){
-		User.findOne({where:{id: UserId}},
+	user.addLike = function(userId, postId, cb){
+		user.findOne({where:{id: userId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -181,9 +181,9 @@ module.exports = function(User) {
 					//if this is the first post he like
 					else if(postLikedNow === ''){
 						postLikedNow = postId;
-						User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
+						user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
 						function(err,info){
-							User.findOne({where:{id: UserId}},
+							user.findOne({where:{id: userId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -207,9 +207,9 @@ module.exports = function(User) {
 							if(dataBadges.toString()==="[{}]"){
 								newBadge = '{"badgeName": "The Twin Thumbs Up [BRONZE]", "achieved_date": "'+dateJSON+'"}';
 								badgeCount = badgeCount+1;
-								User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+								user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 								function(err,info){
-									User.findOne({where:{id: UserId}},
+									user.findOne({where:{id: userId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -223,9 +223,9 @@ module.exports = function(User) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge));
 								badgesNow = dataBadges.toString();
-								User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+								user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 								function(err,info){
-									User.findOne({where:{id: UserId}},
+									user.findOne({where:{id: userId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -245,9 +245,9 @@ module.exports = function(User) {
 							badgeCount = badgeCount+1;	
 							dataBadges.push(JSON.parse(newBadge));
 							badgesNow = dataBadges.toString();
-							User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+							user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 							function(err,info){
-								User.findOne({where:{id: UserId}},
+								user.findOne({where:{id: userId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -265,9 +265,9 @@ module.exports = function(User) {
 							badgeCount = badgeCount+1;
 							dataBadges.push(JSON.parse(newBadge));
 							badgesNow = dataBadges.toString();
-							User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
+							user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, //update postLikedNow, poin +3, newBadge
 							function(err,info){
-								User.findOne({where:{id: UserId}},
+								user.findOne({where:{id: userId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -279,9 +279,9 @@ module.exports = function(User) {
 						}
 
 						else{ //posts he liked is not 10, 30, or 50
-							User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
+							user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin}, //update postLikedNow, and poin +3
 							function(err,info){
-								User.findOne({where:{id: UserId}},
+								user.findOne({where:{id: userId}},
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -296,8 +296,8 @@ module.exports = function(User) {
 			});
 	};
 
-	User.addUnlike = function(UserId, postId, cb){
-		User.findOne({where:{id: UserId}},
+	user.addUnlike = function(userId, postId, cb){
+		user.findOne({where:{id: userId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -318,9 +318,9 @@ module.exports = function(User) {
 					else {						
 						postLikedNow = postLikedNow.replace(postId,'');
 					}
-					User.updateAll({id: UserId}, {postLiked: postLikedNow, poin: dataPoin}, //update
+					user.updateAll({id: userId}, {postLiked: postLikedNow, poin: dataPoin}, //update
 					function(err,info){
-						User.findOne({where:{id: UserId}},
+						user.findOne({where:{id: userId}},
 							function(err,instance){
 								if(instance===null){
 									cb(null,null);
@@ -333,8 +333,8 @@ module.exports = function(User) {
 			});
 	};
 
-	User.likeCounter = function(UserId, cb){
-		User.findOne({fields: {postLiked: true}, where: {id: UserId}},
+	user.likeCounter = function(userId, cb){
+		user.findOne({fields: {postLiked: true}, where: {id: userId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -347,8 +347,8 @@ module.exports = function(User) {
 			});
 	};
 
-	User.addSeen = function(UserId, postId, cb){
-		User.findOne({where:{id: UserId}},
+	user.addSeen = function(userId, postId, cb){
+		user.findOne({where:{id: userId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -366,9 +366,9 @@ module.exports = function(User) {
 					//if this is the first post he see
 					else if(postSeenNow === ''){
 						postSeenNow = postId;
-						User.updateAll({id: UserId}, {postSeen: postSeenNow, poin: dataPoin}, //update
+						user.updateAll({id: userId}, {postSeen: postSeenNow, poin: dataPoin}, //update
 						function(err,info){
-							User.findOne({where:{id: UserId}},
+							user.findOne({where:{id: userId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -390,9 +390,9 @@ module.exports = function(User) {
 							if (dataBadges.toString()==="[{}]"){
 								newBadge = '{"badgeName" : "The Most Seeing Eye [BRONZE]", "achieved_date" : "'+dateJSON+'"}';
 								badgeCount = badgeCount+1;
-								User.updateAll({id:UserId}, {postSeen: postSeenNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								user.updateAll({id:userId}, {postSeen: postSeenNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									User.findOne({where:{id: UserId}},
+									user.findOne({where:{id: userId}},
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -406,9 +406,9 @@ module.exports = function(User) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge));
 								badgesNow = dataBadges.toString();
-								User.updateAll({id:UserId}, {postSeen: postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, newBadge
+								user.updateAll({id:userId}, {postSeen: postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, newBadge
 								function(err,info){
-									User.findOne({where:{id: UserId}}, 
+									user.findOne({where:{id: userId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -426,9 +426,9 @@ module.exports = function(User) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								User.updateAll({id:UserId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								user.updateAll({id:userId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									User.findOne({where:{id: UserId}}, 
+									user.findOne({where:{id: userId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -444,9 +444,9 @@ module.exports = function(User) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								User.updateAll({id:UserId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+								user.updateAll({id:userId}, {postSeen:postSeenNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 								function(err,info){
-									User.findOne({where:{id: UserId}}, 
+									user.findOne({where:{id: userId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -456,9 +456,9 @@ module.exports = function(User) {
 										})
 								});
 						} else {
-							User.updateAll({id:UserId}, {postSeen:postSeenNow, poin: dataPoin}, // update postSeenNow, poin+1
+							user.updateAll({id:userId}, {postSeen:postSeenNow, poin: dataPoin}, // update postSeenNow, poin+1
 								function(err,info){
-									User.findOne({where:{id: UserId}}, 
+									user.findOne({where:{id: userId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -474,8 +474,8 @@ module.exports = function(User) {
 		});
 	};
 
-	User.seenCounter = function(UserId, cb){
-		User.findOne({fields: {postSeen: true}, where: {id: UserId}},
+	user.seenCounter = function(userId, cb){
+		user.findOne({fields: {postSeen: true}, where: {id: userId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -488,8 +488,8 @@ module.exports = function(User) {
 			});
 	};
 
-	User.addShared = function(UserId, postId, cb){
-		User.findOne({where:{id: UserId}},
+	user.addShared = function(userId, postId, cb){
+		user.findOne({where:{id: userId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -507,9 +507,9 @@ module.exports = function(User) {
 					//if this is the first post he share
 					else if(postSharedNow === ''){
 						postSharedNow = postId;
-						User.updateAll({id: UserId}, {postShared: postSharedNow, poin:dataPoin}, //update
+						user.updateAll({id: userId}, {postShared: postSharedNow, poin:dataPoin}, //update
 						function(err,info){
-							User.findOne({where:{id: UserId}},
+							user.findOne({where:{id: userId}},
 								function(err,instance){
 									if(instance===null){
 										cb(null,null);
@@ -530,9 +530,9 @@ module.exports = function(User) {
 								if (dataBadges.toString()==="[{}]"){
 									newBadge = '{"badgeName" : "The Human Handbook [BRONZE]", "achieved_date" : "'+dateJSON+'"}';
 									badgeCount = badgeCount+1;
-									User.updateAll({id:UserId}, {postShared: postSharedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSharedNow, poin+1, new Badge
+									user.updateAll({id:userId}, {postShared: postSharedNow, poin: dataPoin, badges: '['+newBadge+']', badgeCount: badgeCount}, // update postSharedNow, poin+1, new Badge
 									function(err,info){
-										User.findOne({where:{id: UserId}},
+										user.findOne({where:{id: userId}},
 											function(err,instance){
 												if(instance===null){
 													cb(null,null);
@@ -546,9 +546,9 @@ module.exports = function(User) {
 									badgeCount = badgeCount+1;
 									dataBadges.push(JSON.parse(newBadge));
 									badgesNow = dataBadges.toString();
-									User.updateAll({id:UserId}, {postShared: postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSharedNow, poin+1, newBadge
+									user.updateAll({id:userId}, {postShared: postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSharedNow, poin+1, newBadge
 									function(err,info){
-										User.findOne({where:{id: UserId}}, 
+										user.findOne({where:{id: userId}}, 
 											function(err,instance){
 												if(instance===null){
 													cb(null,null);
@@ -566,9 +566,9 @@ module.exports = function(User) {
 								badgeCount = badgeCount+1;
 								dataBadges.push(JSON.parse(newBadge)); // add new badge
 								badgesNow = dataBadges.toString();
-								User.updateAll({id:UserId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new adge
+								user.updateAll({id:userId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new adge
 								function(err,info){
-									User.findOne({where:{id: UserId}}, 
+									user.findOne({where:{id: userId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -584,9 +584,9 @@ module.exports = function(User) {
 							badgeCount = badgeCount+1;
 							dataBadges.push(JSON.parse(newBadge)); // add new badge
 							badgesNow = dataBadges.toString();
-							User.updateAll({id:UserId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
+							user.updateAll({id:userId}, {postShared:postSharedNow, poin: dataPoin, badges: badgesNow, badgeCount: badgeCount}, // update postSeenNow, poin+1, new Badge
 							function(err,info){
-								User.findOne({where:{id: UserId}}, 
+								user.findOne({where:{id: userId}}, 
 									function(err,instance){
 										if(instance===null){
 											cb(null,null);
@@ -596,9 +596,9 @@ module.exports = function(User) {
 									})
 							});
 						} else {
-							User.updateAll({id:UserId}, {postShared:postSharedNow, poin: dataPoin}, // update postSeenNow, poin+1
+							user.updateAll({id:userId}, {postShared:postSharedNow, poin: dataPoin}, // update postSeenNow, poin+1
 								function(err,info){
-									User.findOne({where:{id: UserId}}, 
+									user.findOne({where:{id: userId}}, 
 										function(err,instance){
 											if(instance===null){
 												cb(null,null);
@@ -613,8 +613,8 @@ module.exports = function(User) {
 			});
 	};
 
-	User.sharedCounter = function(UserId, cb){
-		User.findOne({fields: {postShared: true}, where: {id: UserId}},
+	user.sharedCounter = function(userId, cb){
+		user.findOne({fields: {postShared: true}, where: {id: userId}},
 			function(err,instance){
 				if(instance===null){
 					cb(null,null);
@@ -627,10 +627,10 @@ module.exports = function(User) {
 			});
 	};
 
-	User.saveOneSignalId = function(UserId, oneSignalId, cb){
-		User.updateAll({id:UserId}, {oneSignalId: oneSignalId},
+	user.saveOneSignalId = function(userId, oneSignalId, cb){
+		user.updateAll({id:userId}, {oneSignalId: oneSignalId},
 			function(err,info){
-				User.findOne({where:{id: UserId}}, 
+				user.findOne({where:{id: userId}}, 
 					function(err,instance){
 						if(instance===null){
 							cb(null,null);
@@ -641,7 +641,7 @@ module.exports = function(User) {
 			});
 	}
 
-	User.updatePassword = function (ctx, email, oldPassword, newPassword, cb) {
+	user.updatePassword = function (ctx, email, oldPassword, newPassword, cb) {
 	  var newErrMsg, newErr;
 	  try {
 	    this.findOne({where: {id: ctx.req.accessToken.userId, email: email}}, function (err, user) {
@@ -683,7 +683,7 @@ module.exports = function(User) {
 
 	};
 
-	// User.getDevices = function (UserId,cb){
+	// user.getDevices = function (userId,cb){
 	// 	var http = require('https');
 	// 	var headers = {
 	// 	  "Content-Type": "application/json",
@@ -718,7 +718,7 @@ module.exports = function(User) {
 	// 	            // var allMessages = []; // array of string, this variabel combines senderMessage & receiverMessage
 
 	// 	            oneSignalId = [];
-	// 	            User.findOne({where:{id: UserId}}, 
+	// 	            user.findOne({where:{id: userId}}, 
 	// 	            			function(err,instance){
 	// 	            				if(instance===null){
 	// 	            					// cb(null,null);
@@ -742,9 +742,9 @@ module.exports = function(User) {
 	// 	            // device_model : parsed.device_model;
 	// 	            // console.log(allMessages);
 
-	// 	            User.updateAll({id:UserId}, {session_count : session_count, last_active : last_active},
+	// 	            user.updateAll({id:userId}, {session_count : session_count, last_active : last_active},
 	// 	            	function(err,info){
-	// 	            		User.findOne({where:{id: UserId}}, 
+	// 	            		user.findOne({where:{id: userId}}, 
 	// 	            			function(err,instance){
 	// 	            				if(instance===null){
 	// 	            					cb(null,null);
@@ -771,18 +771,18 @@ module.exports = function(User) {
 	// }
 
 
-	User.remoteMethod(
-		'getUser',
+	user.remoteMethod(
+		'getuser',
 		{
 			accepts: {arg: 'username', type: 'string'},
 			returns: {arg: 'id', type: 'string', root: true},
-			http: {path: '/getUser', verb: 'get', source: 'query'},
-			description: "Get User instance by username"
+			http: {path: '/getuser', verb: 'get', source: 'query'},
+			description: "Get user instance by username"
 		}
 	);
 
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'getContacts',
 		{
 			// accepts: {arg: 'id', type: 'string'},
@@ -792,38 +792,38 @@ module.exports = function(User) {
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'getLeaderboard',
 		{
 			returns: {arg: 'id', type: 'string', root: true},
 			http: {path: '/getLeaderboard', verb: 'get', source: 'query'},
-			description: "Get leaderboard of all Users"
+			description: "Get leaderboard of all users"
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'addComment',
 		{
 			accepts: [
 					{arg: 'postId', type: 'string'},
-					{arg: 'UserId', type: 'string'},
-					{arg: 'UserName', type: 'string'},
-					{arg: 'UserPhoto', type: 'string'},
+					{arg: 'userId', type: 'string'},
+					{arg: 'userName', type: 'string'},
+					{arg: 'userPhoto', type: 'string'},
 					{arg: 'content', type: 'string'}
 					],
 			returns: [
 					{arg: 'comment', type: 'string'},
-					{arg: 'User', type: 'string'}
+					{arg: 'user', type: 'string'}
 					],
 			http: {path: '/addComment', verb: 'put', source: 'query'}
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'addLike',
 		{
 			accepts: [
-					{arg: 'UserId', type: 'string'},
+					{arg: 'userId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postLiked', type: 'string', root: true},
@@ -831,11 +831,11 @@ module.exports = function(User) {
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'addUnlike',
 		{
 			accepts: [
-					{arg: 'UserId', type: 'string'},
+					{arg: 'userId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postLiked', type: 'string', root: true},
@@ -843,41 +843,41 @@ module.exports = function(User) {
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'likeCounter',
 		{
-			accepts: {arg: 'UserId', type: 'string'},
+			accepts: {arg: 'userId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/likeCounter', verb: 'get', source: 'query'},
-			description: "Get how many post User{id} has liked"
+			description: "Get how many post user{id} has liked"
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'seenCounter',
 		{
-			accepts: {arg: 'UserId', type: 'string'},
+			accepts: {arg: 'userId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/seenCounter', verb: 'get', source: 'query'},
-			description: "Get how many post User{id} has seen"
+			description: "Get how many post user{id} has seen"
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'sharedCounter',
 		{
-			accepts: {arg: 'UserId', type: 'string'},
+			accepts: {arg: 'userId', type: 'string'},
 			returns: {arg: 'count', type: 'number'},
 			http: {path: '/sharedCounter', verb: 'get', source: 'query'},
-			description: "Get how many post User{id} has shared"
+			description: "Get how many post user{id} has shared"
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'addSeen',
 		{
 			accepts: [
-					{arg: 'UserId', type: 'string'},
+					{arg: 'userId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postSeen', type: 'string', root: true},
@@ -885,11 +885,11 @@ module.exports = function(User) {
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'addShared',
 		{
 			accepts: [
-					{arg: 'UserId', type: 'string'},
+					{arg: 'userId', type: 'string'},
 					{arg: 'postId', type: 'string'}
 					],
 			returns: {arg: 'postSeen', type: 'string', root: true},
@@ -897,11 +897,11 @@ module.exports = function(User) {
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'saveOneSignalId',
 		{
 			accepts: [
-					{arg: 'UserId', type: 'string'},
+					{arg: 'userId', type: 'string'},
 					{arg: 'oneSignalId', type: 'string'}
 					],
 			returns: {type: 'string', root: true},
@@ -909,7 +909,7 @@ module.exports = function(User) {
 		}
 	);
 
-	User.remoteMethod(
+	user.remoteMethod(
 		'updatePassword',
 		  {
 		    description: "Allows a logged user to change his password.",
@@ -924,10 +924,10 @@ module.exports = function(User) {
 		  }
 	);
 
-	// User.remoteMethod(
+	// user.remoteMethod(
 	// 	'getDevices',
 	// 	{
-	// 		arg: 'UserId', type: 'string',
+	// 		arg: 'userId', type: 'string',
 	// 		returns : {arg: 'result', type: 'object', root: true},
 	// 		http : {path: '/getDevices', verb: 'get'}
 	// 	}
