@@ -1,6 +1,6 @@
 {
-  "name": "Employee",
-  "base": "User",
+  "name": "User",
+  "base": "PersistedModel",
   "strict": false,
   "idInjection": false,
   "options": {
@@ -68,7 +68,7 @@
       "principalType": "ROLE",
       "principalId": "$everyone",
       "permission": "ALLOW",
-      "property": "getEmployee"
+      "property": "getUser"
     },
     {
       "accessType": "EXECUTE",
