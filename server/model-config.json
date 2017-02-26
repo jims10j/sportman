@@ -39,13 +39,13 @@
     "$promise": {},
     "$resolved": true
   },
-  "Employee": {
+  "team": {
     "dataSource": "cloudantNoSQLDB",
     "public": true,
     "$promise": {},
     "$resolved": true
   },
-  "team": {
+  "user": {
     "dataSource": "cloudantNoSQLDB",
     "public": true,
     "$promise": {},

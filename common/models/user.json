@@ -1,5 +1,5 @@
 {
-  "name": "User",
+  "name": "user",
   "base": "User",
   "strict": false,
   "idInjection": false,
@@ -20,50 +20,22 @@
       "type": "string",
       "required": true
     },
+    "password": {
+      "type": "string",
+      "required": true
+    },
     "email": {
       "type": "string",
       "required": true
     },
     "role": {
-      "type": "string"
-    },
-    "admin": {
-      "type": "boolean"
-    },
-    "photo": {
-      "type": "string"
-    },
-    "oneSignalId": {
-      "type": "string"
-    },
-    "session_count": {
-      "type": "string"
-    },
-    "last_active": {
-      "type": "string"
-    },
-    "device_model": {
-      "type": "string"
-    },
-    "userTicket": {
-      "type": "string"
+      "type": "string",
+      "required": true
     }
   },
   "validations": [],
-  "relations": {
-    "posts": {
-      "type": "hasMany",
-      "model": "Post",
-      "foreignKey": ""
-    },
-    "tickets": {
-      "type": "hasMany",
-      "model": "Ticket",
-      "foreignKey": ""
-    }
-  },
-  "acls": [
-    {
+  "relations": {},
+  "acls": [ {
       "accessType": "EXECUTE",
       "principalType": "ROLE",
       "principalId": "$everyone",
@@ -171,3 +143,4 @@
   ],
   "methods": {}
 }
+
