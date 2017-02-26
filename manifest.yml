@@ -2,7 +2,7 @@ applications:
 - path: .
   memory: 512M
   instances: 1
-  domain: mybluemix.net
+  domain: ng.mybluemix.net
   name: sportman
   host: sportman
   disk_quota: 1024M
