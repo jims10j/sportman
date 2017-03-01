@@ -916,7 +916,7 @@ module.exports = function(User) {
 		    http: {verb: 'put'},
 		    accepts: [
 		      {arg: 'ctx', type: 'object', http: {source: 'context'}},
-		      {arg: 'email', type: 'string', required: true, description: "The user email, just for verification"},
+		      {arg: 'email', type: 'string', required: false, description: "The user email, just for verification"},
 		      {arg: 'oldPassword', type: 'string', required: true, description: "The user old password"},
 		      {arg: 'newPassword', type: 'string', required: true, description: "The user new password"}
 		    ],
