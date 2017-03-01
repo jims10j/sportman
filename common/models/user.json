@@ -25,8 +25,7 @@
       "required": true
     },
     "email": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
     "role": {
       "type": "string",
