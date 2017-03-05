@@ -24,6 +24,14 @@
       "type": "string",
       "required": true
     },
+    "oldPassword": {
+      "type": "string",
+      "required": true
+    },
+    "newPassword": {
+      "type": "string",
+      "required": true
+    },
     "email": {
       "type": "string",
       "required": false
