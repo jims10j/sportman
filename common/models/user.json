@@ -24,17 +24,9 @@
       "type": "string",
       "required": true
     },
-    "oldPassword": {
-      "type": "string",
-      "required": false
-    },
-    "newPassword": {
-      "type": "string",
-      "required": false
-    },
     "email": {
       "type": "string",
-      "required": false
+      "required": true
     },
     "role": {
       "type": "string",
