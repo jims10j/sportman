@@ -655,7 +655,7 @@ module.exports = function(User) {
 	        cb(newErr);
 	      } else {
 	        user.hasPassword(oldPassword, function (err, isMatch) {
-	          if (isMatch) {
+	          if (!isMatch) {
 
 	            // TODO ...further verifications should be done here (e.g. non-empty new password, complex enough password etc.)...
 
