@@ -26,11 +26,11 @@
     },
     "oldPassword": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "newPassword": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "email": {
       "type": "string",
